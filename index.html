@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+
+  <div id='chatbox' style="width: 300px; height: 100px; background-color: black; color: white; margin-bottom: 10px;">
+  </div>
+  <input type="text" id='chat_input'>
+  <button id='send'>Send</button>
+  
+  <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+  <script src='/socket.io/socket.io.js'></script>
+
+  <script>
+    var socket = io.connect('http://localhost:8080');
+
+    socket.on('connect', function(data) {
+      nickname = prompt('Enter nickname');
+      socket.emit('join', nickname);
+    });
+
+    $('#send').on('click', function() {
+      var message = $('#chat_input').val();
+      socket.emit('messages', message);
+    });
+
+    socket.on('messages', function(data) {
+      insertMessage(data)
+    });
+
+    function insertMessage(text) {
+      if (text != null) {
+        $('#chatbox').append('<p>' + text + '</p>');
+      }
+    }
+  </script>
+</body>
+</html>
